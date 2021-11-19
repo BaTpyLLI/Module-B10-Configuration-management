@@ -1,0 +1,6 @@
+---
+# handlers file for nginx+php-fpm
+    - name: Reload nginx
+      service:
+       name: nginx
+       state: reloaded
