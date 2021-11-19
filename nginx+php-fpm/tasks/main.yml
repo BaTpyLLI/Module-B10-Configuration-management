@@ -1,0 +1,21 @@
+---
+# tasks file for nginx+php-fpm
+- name: install nginx and php-fpm
+  apt:
+    name:
+    - nginx
+    - php-fpm
+    state: present
+    update_cache: yes
+
+- name: Change default file nginx
+  copy:
+    src: /home/batpylli/ansible/nginx+php-fpm/files/default
+    dest: /etc/nginx/sites-available/
+  notify:
+  - Reload nginx
+
+- name: Add index.php
+  copy:
+    src: /home/batpylli/ansible/nginx+php-fpm/files/index.php
+    dest: /opt/nginx/ansible/
