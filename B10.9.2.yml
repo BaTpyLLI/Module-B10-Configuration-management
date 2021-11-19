@@ -1,0 +1,44 @@
+---
+- name: Install dnsmasq or nginx from role
+  hosts: task
+  become: yes
+  roles:
+    - role: dnsmasq
+      tags: dnsmasq
+    - role: nginx+php-fpm
+      tags: nginx
+
+  tasks:
+  - name: Create group superusers
+    group:
+      name: superusers
+      state: present
+
+  - name: Create user2
+    user:
+      name: user2
+      groups: superusers
+      shell: /bin/bash
+
+  - name: Create user3
+    user:
+      name: user3
+      groups: superusers
+      shell: /bin/bash
+
+  - name: Add SSH keys to host for user2
+    authorized_key:
+      user: user2
+      key: "{{ lookup('file', '/home/batpylli/.ssh/user2.pub') }}"
+
+  - name: Add SSH keys to host for user3
+    authorized_key:
+      user: user3
+      key: "{{ lookup('file', '/home/batpylli/.ssh/user3.pub') }}"
+
+  - name: Add superusers to sudousers whithout pass
+    lineinfile:
+      path: /etc/sudoers
+      state: present
+      insertafter: '^%sudo'
+      line: '%superusers    ALL = (ALL) NOPASSWD: ALL'
