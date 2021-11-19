@@ -1,0 +1,55 @@
+- hosts: task
+  become: yes
+  tasks:
+  - name: Install gnupg
+    apt:
+      state: present
+      update_cache: yes
+      name: gnupg
+    tags: docker
+
+  - name: Install gpg key
+    apt_key:
+      url: https://download.docker.com/linux/debian/gpg
+    tags: docker
+
+  - name: Add repo Docker
+    apt_repository:
+       repo: deb https://download.docker.com/linux/debian buster stable
+    tags: docker
+
+  - name: Install Docker
+    apt:
+      state: present
+      update_cache: yes
+      name:
+         - docker-ce
+         - docker-ce-cli
+         - containerd.io
+    tags: docker
+
+  - name: Start Docker
+    service:
+           name: docker
+           state: started
+    tags: docker
+
+  - name: Install repo MySQL
+    apt:
+      deb: https://dev.mysql.com/get/mysql-apt-config_0.8.20-1_all.deb
+    tags: install_mysql
+
+  - name: Install MySQL
+    apt:
+      name: mysql-community-server
+      state: present
+      update_cache: yes
+    tags: install_mysql
+
+  - name: Start MySQL
+    service:
+         name: mysql
+         state: started
+    tags:
+      - start_mysql
+      - install_mysql
